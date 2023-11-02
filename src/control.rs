@@ -14,7 +14,7 @@ pub fn start(watch: Watch) {
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Failed to deserialize lights update {0}")]
-    LightsDecerialization(#[from] serde_json::Error),
+    LightsDeserialization(#[from] serde_json::Error),
 }
 
 pub fn process(update: Entry) -> Result<(), Error> {
