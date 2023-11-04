@@ -684,6 +684,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rppal"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "815253b59e1b9c89918977155f7a4f39007cfe2b0cc5cf50615f9df275b9453c"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "rustls"
 version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -888,6 +897,7 @@ name = "stoplight-rs"
 version = "0.1.0"
 dependencies = [
  "nats",
+ "rppal",
  "serde",
  "serde_json",
  "thiserror",

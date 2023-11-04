@@ -4,6 +4,7 @@ use thiserror::Error;
 use tracing_subscriber::FmtSubscriber;
 
 mod control;
+mod gpio;
 mod lights;
 
 fn main() -> Result<(), Error> {
