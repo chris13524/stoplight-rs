@@ -3,16 +3,18 @@ use {
         light_state::LightState,
         stoplight::{self, Stoplight},
     },
-    nats::kv::{Entry, Watch},
+    async_nats::jetstream::kv::{Entry, Watch},
+    futures::StreamExt,
     std::convert::Infallible,
     thiserror::Error,
     tracing::{info, warn},
 };
 
-pub fn start(watch: Watch) -> Result<Infallible, Error> {
-    let mut stoplight = Stoplight::new()?;
+pub async fn start(mut watch: Watch<'_>) -> Result<Infallible, Error> {
+    let mut stoplight = Stoplight::new().map_err(Error::StoplightInit)?;
 
-    for update in watch {
+    while let Some(update) = watch.next().await {
+        let update = update.map_err(Error::NatsWatcher)?;
         if let Err(e) = process(&mut stoplight, update) {
             warn!("Error processing update: {e}");
         }
@@ -33,7 +35,10 @@ pub fn process(stoplight: &mut Stoplight, update: Entry) -> Result<(), serde_jso
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Stoplight init error {0}")]
-    StoplightInitError(#[from] stoplight::Error),
+    StoplightInit(stoplight::Error),
+
+    #[error("NATS watcher error {0}")]
+    NatsWatcher(async_nats::jetstream::kv::WatcherError),
 
     #[error("Out of updates")]
     OutOfUpdates,
