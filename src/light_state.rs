@@ -1,15 +1,17 @@
-use core::fmt;
-use serde::Deserialize;
-use std::fmt::{Display, Formatter};
+use {
+    core::fmt,
+    serde::Deserialize,
+    std::fmt::{Display, Formatter},
+};
 
 #[derive(Deserialize)]
-pub struct Lights {
+pub struct LightState {
     pub red: bool,
     pub yellow: bool,
     pub green: bool,
 }
 
-impl Display for Lights {
+impl Display for LightState {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         if self.red {
             write!(f, "R")?;

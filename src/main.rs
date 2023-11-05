@@ -1,17 +1,20 @@
-use nats::{jetstream, kv::Config};
-use std::io::ErrorKind;
-use thiserror::Error;
-use tracing_subscriber::FmtSubscriber;
+use {
+    nats::{jetstream, kv::Config},
+    std::io::ErrorKind,
+    thiserror::Error,
+    tracing_subscriber::FmtSubscriber,
+};
 
 mod control;
-mod gpio;
-mod lights;
+mod light_state;
+mod stoplight;
 
 fn main() -> Result<(), Error> {
     tracing::subscriber::set_global_default(FmtSubscriber::new())
         .expect("Failed to set_global_default");
 
     let nats = nats::Options::with_credentials("default.creds")
+        .max_reconnects(None) // default is 60
         .tls_required(true)
         .connect("connect.ngs.global")?;
     let js = jetstream::new(nats);
@@ -33,7 +36,7 @@ fn main() -> Result<(), Error> {
     };
 
     let watch = kv.watch_all()?;
-    control::start(watch);
+    control::start(watch)?;
 
     Ok(())
 }
@@ -42,4 +45,7 @@ fn main() -> Result<(), Error> {
 pub enum Error {
     #[error("NATS error: {0}")]
     NatsError(#[from] std::io::Error),
+
+    #[error("Control error: {0}")]
+    ControlError(#[from] control::Error),
 }
