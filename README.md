@@ -17,7 +17,7 @@ Note if you use a 32-bit OS, you must use the `armv7-unknown-linux-musleabi` bui
 
 ```bash
 cargo install cross --git https://github.com/cross-rs/cross
-cross build --release --target=aarch64-unknown-linux-musl
+cross build --release
 ```
 
 ## Copy ops scripts & build output
@@ -37,4 +37,10 @@ sudo apt update && sudo apt upgrade && sudo apt install -y docker.io docker-comp
 sudo usermod -aG docker stoplight
 # relogin
 ./up.sh
+```
+
+Full pipeline:
+
+```bash
+cross build --release && scp target/aarch64-unknown-linux-musl/release/stoplight-rs stoplight2: && ssh stoplight2 ./up.sh
 ```
