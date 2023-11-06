@@ -2,7 +2,22 @@
 
 Stoplight code for Raspberry Pi Zero 2 W.
 
-## Installing Raspberry Pi OS
+## Develop
+
+```bash
+just lint
+```
+
+During normal builds, the GPIO control dependency is mocked out and is not compiled. To test this code too, you will need the `cross` tool installed, and then you can run `just devloop`.
+
+```bash
+cargo install cross --git https://github.com/cross-rs/cross
+just devloop
+```
+
+## Installing
+
+### Installing Raspberry Pi OS
 
 Use [Rasberry Pi Imager](https://www.raspberrypi.com/software/) to flash Raspberry Pi OS 64-bit Lite (Legacy is fine).
 - General tab:
@@ -11,16 +26,15 @@ Use [Rasberry Pi Imager](https://www.raspberrypi.com/software/) to flash Raspber
   - Configure wireless LAN with the 2.4 Ghz WiFi network
 - Set to Allow public-key authentication only and provide an SSH public key
 
-## Building
+### Building
 
 Note if you use a 32-bit OS, you must use the `armv7-unknown-linux-musleabi` build target.
 
 ```bash
-cargo install cross --git https://github.com/cross-rs/cross
-cross build --release
+just build
 ```
 
-## Copy ops scripts & build output
+### Copy ops scripts & build output
 
 ```bash
 scp target/aarch64-unknown-linux-musl/release/stoplight-rs stoplight2:
@@ -39,8 +53,8 @@ sudo usermod -aG docker stoplight
 ./up.sh
 ```
 
-Full pipeline:
+Full deploy pipeline:
 
 ```bash
-cross build --release && scp target/aarch64-unknown-linux-musl/release/stoplight-rs stoplight2: && ssh stoplight2 ./up.sh
+just build && scp target/aarch64-unknown-linux-musl/release/stoplight-rs stoplight2: && ssh stoplight2 ./up.sh
 ```

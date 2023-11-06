@@ -2,9 +2,14 @@ fmt:
   cargo +nightly fmt -- --config group_imports=StdExternalCrate,imports_granularity=One
 
 clippy:
-  cross clippy --all-features --tests -- -D warnings
+  cargo clippy --tests -- -D warnings
 
-lint: fmt clippy
+test:
+  cargo test
+
+lint: fmt clippy test
 
 build:
-  cross build --release
+  cross build --release --features=rpi
+
+devloop: lint build
